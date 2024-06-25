@@ -16,6 +16,7 @@ switch (arguments[0]) {
         break
     case 'token':
         const tokenHandler = new TokenHandler()
+        tokenHandler.handleRequest(arguments[1], arguments[2])
         break
     case '--help':
         fs.readFile(__dirname + "/usage.txt", (error, data) => {

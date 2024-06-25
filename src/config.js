@@ -6,14 +6,6 @@ const {config} = require("../templates");
 class ConfigHandler {
     handleRequest(argument, {option, value}) {
         switch (argument) {
-            case '--help':
-                extractLines('/../usage.txt', 10, 13)
-                    .then((lines) => {
-                        console.log('cli config help information\n')
-                        console.log(lines)
-                    })
-                    .catch(console.log)
-                break
             case '--show':
                 this.#showConfig()
                 break
@@ -23,7 +15,14 @@ class ConfigHandler {
             case '--set':
                 this.#setConfig(option, value)
                 break
+            case '--help':
             default:
+                extractLines('/../usage.txt', 10, 13)
+                    .then((lines) => {
+                        console.log('cli config help information\n')
+                        console.log(lines)
+                    })
+                    .catch(console.log)
                 break
         }
     }

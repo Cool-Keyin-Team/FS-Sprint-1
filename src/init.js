@@ -38,14 +38,6 @@ class InitHandler {
         }
 
         switch (argument) {
-            case '--help':
-                extractLines('/../usage.txt', 4, 8)
-                    .then((lines) => {
-                        console.log('cli init help information\n')
-                        console.log(lines)
-                    })
-                    .catch(console.log)
-                break
             case '--all':
                 createFolders(folders)
                     .then(() => createFiles(files))
@@ -57,7 +49,14 @@ class InitHandler {
             case '--cat':
                 createFiles(files)
                 break
+            case '--help':
             default:
+                extractLines('/../usage.txt', 4, 8)
+                    .then((lines) => {
+                        console.log('cli init help information\n')
+                        console.log(lines)
+                    })
+                    .catch(console.log)
                 break
         }
     }

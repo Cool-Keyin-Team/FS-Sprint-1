@@ -1,8 +1,8 @@
+const {extractLines} = require("./utils");
+
 class TokenHandler {
-    handleRequest(argument, {username, phone, email}) {
+    handleRequest(argument, additionalArgument) {
         switch (argument) {
-            case '--help':
-                break
             case '--count':
                 break
             case '--new':
@@ -11,7 +11,14 @@ class TokenHandler {
                 break
             case '--search':
                 break
+            case '--help':
             default:
+                extractLines('/../usage.txt', 15, 22)
+                    .then((lines) => {
+                        console.log('cli token help information\n')
+                        console.log(lines)
+                    })
+                    .catch(console.log)
                 break
         }
     }
