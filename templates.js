@@ -58,6 +58,11 @@ const files = [
         content: JSON.stringify(config),
         name: 'config.json',
         path: 'json'
+    },
+    {
+        content: '[]',
+        name: 'tokens.json',
+        path: 'json'
     }
 ]
 
