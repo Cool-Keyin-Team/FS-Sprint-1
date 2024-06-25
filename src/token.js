@@ -13,6 +13,14 @@ class TokenHandler {
                 this.#createToken(additionalArgument[0])
                 break
             case '--upd':
+                const key = additionalArgument[0] === 'p' ? 'phone' :
+                    additionalArgument[0] === 'e' ? "email" : ''
+
+                if(!key) {
+                    return console.log('Unknown key provided, please check "node cli token --help"')
+                }
+
+                this.#updateToken(additionalArgument[1], key, additionalArgument[2])
                 break
             case '--search':
                 break
@@ -52,7 +60,9 @@ class TokenHandler {
         const tokenPath = path.join(__dirname, '/../json/tokens.json')
 
         fs.readFile(tokenPath, 'utf-8', (error, data) => {
-            if (error) throw error;
+            if (error) {
+                console.log(error)
+            }
             let tokens = JSON.parse(data);
             tokens.push(token);
 
@@ -68,8 +78,30 @@ class TokenHandler {
         return token.token;
     }
 
-    updateToken() {
+    #updateToken(username, key, value) {
+        const tokenPath = path.join(__dirname, '/../json/tokens.json')
 
+        fs.readFile(tokenPath, 'utf-8', (error, data) => {
+            if (error) {
+                console.log(error)
+            }
+            let tokens = JSON.parse(data);
+            const index = tokens.findIndex(token => token.username === username);
+
+            if (index === -1) {
+                return console.log('Token not found')
+            }
+
+            tokens[index] = {...tokens[index], ...{[key]: value}}
+
+            fs.writeFile(tokenPath, JSON.stringify(tokens), (err) => {
+                if (err) console.log(err);
+                else {
+                    console.log(`Token ${tokens[index].token} was updated for ${username}.`);
+                }
+            })
+
+        });
     }
 
     searchToken() {
