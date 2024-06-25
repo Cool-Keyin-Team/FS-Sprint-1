@@ -10,7 +10,7 @@ class TokenHandler {
                 this.#countTokens()
                 break
             case '--new':
-                this.#createToken(additionalArgument[0])
+                this.createToken(additionalArgument[0])
                 break
             case '--upd': {
                 const key = additionalArgument[0] === 'p' ? 'phone' :
@@ -32,7 +32,7 @@ class TokenHandler {
                     return console.log('Unknown key provided, please check "node cli token --help"')
                 }
 
-                this.#searchToken(key, additionalArgument[1])
+                console.log(this.searchToken(key, additionalArgument[1]))
                 break
             }
             case '--help':
@@ -59,7 +59,12 @@ class TokenHandler {
         })
     }
 
-    #createToken(username, email = null, phone = null) {
+    createToken(username, email = null, phone = null) {
+        if (this.searchToken('username', username)) {
+            console.log('Token with same username already exists!')
+            return 'Token with same username already exists!'
+        }
+
         const token = {
             username,
             email,
@@ -114,22 +119,25 @@ class TokenHandler {
         });
     }
 
-    #searchToken(key, value) {
+    searchToken(key, value) {
         const tokenPath = path.join(__dirname, '/../json/tokens.json')
+        let token = null
 
-        fs.readFile(tokenPath, 'utf-8', (error, data) => {
-            if (error) {
-                console.log(error)
-            }
-            let tokens = JSON.parse(data);
+        try {
+            let tokens = JSON.parse(fs.readFileSync(tokenPath, 'utf-8'))
+
             const index = tokens.findIndex(token => token[key] === value);
 
             if (index === -1) {
                 return console.log('Token not found')
             }
 
-            console.log(tokens[index])
-        });
+            token = tokens[index]
+        } catch (e) {
+            return console.log(e)
+        }
+
+        return token
     }
 }
 
