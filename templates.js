@@ -34,6 +34,15 @@ class FormModel {
 module.exports = FormModel;
 `
 
+const config = {
+    name: 'AppConfigCLI',
+    version: '1.0.0',
+    description: 'The Command Line Interface (CLI) for the MyApp.',
+    main: 'cli.js',
+    superuser: 'adm1n',
+    database: 'exampledb'
+};
+
 const files = [
     {
         content: index,
@@ -44,6 +53,11 @@ const files = [
         content: formModel,
         name: 'form-model.js',
         path: 'models'
+    },
+    {
+        content: JSON.stringify(config),
+        name: 'config.json',
+        path: 'json'
     }
 ]
 
