@@ -1,5 +1,7 @@
 const {extractLines} = require("./utils");
 const fs = require('fs');
+const path = require('path')
+const {config} = require("../templates");
 
 class ConfigHandler {
     handleRequest(argument, {option, value}) {
@@ -16,12 +18,25 @@ class ConfigHandler {
                 this.#showConfig()
                 break
             case '--reset':
+                this.#resetConfig()
                 break
             case '--set':
                 break
             default:
                 break
         }
+    }
+
+    #resetConfig() {
+        const filePath = path.join(__dirname, '/../json/config.json')
+
+        fs.writeFile(filePath, JSON.stringify(config), (err) => {
+            if (err) {
+                return console.log('Error while resetting config')
+            }
+
+            console.log('Config has been reset')
+        });
     }
 
     #setConfig() {
@@ -31,7 +46,10 @@ class ConfigHandler {
     #showConfig() {
         let fileName = '/../json/config.json'
         fs.readFile(__dirname + fileName, (error, data) => {
-            if(error) throw error;
+            if (error) {
+                return console.log('Config not found!')
+            }
+
             console.log(JSON.parse(data));
         });
     }

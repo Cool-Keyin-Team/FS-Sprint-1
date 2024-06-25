@@ -63,5 +63,6 @@ const files = [
 
 module.exports = {
     folders,
-    files
+    files,
+    config
 }
