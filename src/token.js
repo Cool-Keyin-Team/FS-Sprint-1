@@ -12,18 +12,29 @@ class TokenHandler {
             case '--new':
                 this.#createToken(additionalArgument[0])
                 break
-            case '--upd':
+            case '--upd': {
                 const key = additionalArgument[0] === 'p' ? 'phone' :
-                    additionalArgument[0] === 'e' ? "email" : ''
+                    additionalArgument[0] === 'e' ? "email" : null
 
-                if(!key) {
+                if (!key) {
                     return console.log('Unknown key provided, please check "node cli token --help"')
                 }
 
                 this.#updateToken(additionalArgument[1], key, additionalArgument[2])
                 break
-            case '--search':
+            }
+            case '--search': {
+                const key = additionalArgument[0] === 'p' ? 'phone' :
+                    additionalArgument[0] === 'e' ? "email" :
+                        additionalArgument[0] === 'u' ? "username" : null
+
+                if (!key) {
+                    return console.log('Unknown key provided, please check "node cli token --help"')
+                }
+
+                this.#searchToken(key, additionalArgument[1])
                 break
+            }
             case '--help':
             default:
                 extractLines('/../usage.txt', 15, 22)
@@ -100,12 +111,25 @@ class TokenHandler {
                     console.log(`Token ${tokens[index].token} was updated for ${username}.`);
                 }
             })
-
         });
     }
 
-    searchToken() {
+    #searchToken(key, value) {
+        const tokenPath = path.join(__dirname, '/../json/tokens.json')
 
+        fs.readFile(tokenPath, 'utf-8', (error, data) => {
+            if (error) {
+                console.log(error)
+            }
+            let tokens = JSON.parse(data);
+            const index = tokens.findIndex(token => token[key] === value);
+
+            if (index === -1) {
+                return console.log('Token not found')
+            }
+
+            console.log(tokens[index])
+        });
     }
 }
 
