@@ -4,19 +4,10 @@ const fs = require('fs')
 const path = require('path')
 
 class TokenHandler {
-    #token = {
-        "created": "1969-01-31 12:30:00",
-        "username": "username",
-        "email": "user@example.com",
-        "phone": "5556597890",
-        "token": "token",
-        "expires": "1969-02-03 12:30:00",
-        "confirmed": "tbd"
-    }
-
     handleRequest(argument, additionalArgument) {
         switch (argument) {
             case '--count':
+                this.#countTokens()
                 break
             case '--new':
                 this.#createToken(additionalArgument[0])
@@ -37,8 +28,16 @@ class TokenHandler {
         }
     }
 
-    countTokens() {
+    #countTokens() {
+        const tokenPath = path.join(__dirname, '/../json/tokens.json')
 
+        fs.readFile(tokenPath, 'utf-8', (error, data) => {
+            if (error) {
+                console.log(error)
+            }
+            let tokens = JSON.parse(data);
+            console.log(`Tokens count: ${tokens.length}`)
+        })
     }
 
     #createToken(username, email = null, phone = null) {
@@ -50,14 +49,14 @@ class TokenHandler {
             expires: Date.now() + 1000 * 60 * 60 * 24 * 3,
             token: crc32(username).toString(8)
         }
-        const filePath = path.join(__dirname, '/../json/tokens.json')
+        const tokenPath = path.join(__dirname, '/../json/tokens.json')
 
-        fs.readFile(filePath, 'utf-8', (error, data) => {
+        fs.readFile(tokenPath, 'utf-8', (error, data) => {
             if (error) throw error;
             let tokens = JSON.parse(data);
             tokens.push(token);
 
-            fs.writeFile(filePath, JSON.stringify(tokens), (err) => {
+            fs.writeFile(tokenPath, JSON.stringify(tokens), (err) => {
                 if (err) console.log(err);
                 else {
                     console.log(`New token ${token.token} was created for ${username}.`);
