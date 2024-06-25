@@ -28,8 +28,8 @@ class InitHandler {
                 .then(count => {
                     if (count === 0) {
                         console.log('All files already exist.');
-                    } else if (count <= folders.length) {
-                        console.log(count + ' of ' + folders.length + ' files were created.');
+                    } else if (count <= files.length) {
+                        console.log(count + ' of ' + files.length + ' files were created.');
                     } else {
                         console.log('All files successfully created.');
                     }
