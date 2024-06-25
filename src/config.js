@@ -21,6 +21,7 @@ class ConfigHandler {
                 this.#resetConfig()
                 break
             case '--set':
+                this.#setConfig(option, value)
                 break
             default:
                 break
@@ -39,7 +40,34 @@ class ConfigHandler {
         });
     }
 
-    #setConfig() {
+    #setConfig(option, value) {
+        const fs = require('fs');
+        const filePath = path.join(__dirname, '/../json/config.json')
+
+        fs.readFile(filePath, 'utf8', (err, data) => {
+            if (err) {
+                console.error('Error reading file:', err);
+                return;
+            }
+
+            try {
+                const jsonData = JSON.parse(data);
+
+                jsonData[option] = value;
+
+                const updatedJsonData = JSON.stringify(jsonData, null, 2);
+
+                fs.writeFile(filePath, updatedJsonData, 'utf8', (err) => {
+                    if (err) {
+                        console.error('Error writing file:', err);
+                        return;
+                    }
+                    console.log('File has been updated successfully');
+                });
+            } catch (err) {
+                console.error('Error parsing JSON:', err);
+            }
+        });
 
     }
 
