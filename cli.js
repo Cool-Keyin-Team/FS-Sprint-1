@@ -12,6 +12,7 @@ switch (arguments[0]) {
         break
     case 'config':
         const configHandler = new ConfigHandler()
+        configHandler.handleRequest(arguments[1], {option: arguments[2], value: arguments[3]})
         break
     case 'token':
         const tokenHandler = new TokenHandler()
