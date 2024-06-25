@@ -1,38 +1,66 @@
 const http = require('http');
-const querystring = require('querystring');
+const fs = require('fs');
+const path = require('path');
+const {parse} = require('querystring');
 const {checkFileExists} = require("./src/utils");
+const {TokenHandler} = require("./src/token");
 
-const modelExists = checkFileExists('./models/form-model')
-const viewExists = checkFileExists('./views/form-view.html')
+const modelExists = checkFileExists('./models/form-model.js')
+const viewExists = checkFileExists('./views/index.html')
+const tokensExists = checkFileExists('./json/tokens.json')
 
-if (!modelExists || !viewExists) {
+if (!modelExists || !viewExists || !tokensExists) {
+    console.log('check "node cli ---help"')
     return
 }
 
-const FormModel = require('./models/formModel');
-const { renderForm, renderResponse } = require('./views/formView');
-
 const server = http.createServer((req, res) => {
-    if (req.method === 'GET') {
-        // Serve the HTML form
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.end(renderForm());
-    } else if (req.method === 'POST') {
-        // Handle form submission
+    if (req.method === 'GET' && req.url === '/') {
+        // Read the HTML file
+        const filePath = path.join(__dirname, 'views', 'index.html');
+        fs.readFile(filePath, (err, data) => {
+            if (err) {
+                res.statusCode = 500;
+                res.setHeader('Content-Type', 'text/plain');
+                res.end('Internal Server Error');
+            } else {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'text/html');
+                res.end(data);
+            }
+        });
+    } else if (req.method === 'POST' && req.url === '/get') {
         let body = '';
         req.on('data', chunk => {
             body += chunk.toString();
         });
         req.on('end', () => {
-            const parsedBody = querystring.parse(body);
-            const formModel = new FormModel(parsedBody.name, parsedBody.email);
-            res.writeHead(200, {'Content-Type': 'text/html'});
-            res.end(renderResponse(formModel));
+            const formData = parse(body);
+            const tokenHandler = new TokenHandler()
+            const token = tokenHandler.searchToken('username', formData.username)?.token || 'Not Found'
+
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'text/plain');
+            res.end(`Form submitted successfully!\nYour token: ${token}`);
+        });
+    } else if (req.method === 'POST' && req.url === '/create') {
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+        req.on('end', () => {
+            const formData = parse(body);
+            const tokenHandler = new TokenHandler()
+            const token = tokenHandler.createToken(formData.username)
+
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'text/plain');
+            res.end(`Form submitted successfully!\nYour token: ${token}`);
         });
     } else {
-        // Handle other HTTP methods
-        res.writeHead(405, {'Content-Type': 'text/plain'});
-        res.end('Method Not Allowed');
+        res.statusCode = 404;
+        res.setHeader('Content-Type', 'text/plain');
+        res.end('Not Found');
     }
 });
 

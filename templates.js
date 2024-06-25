@@ -1,24 +1,27 @@
-const folders = ['views', 'models', 'logs', 'json'];
+const folders = ['views', 'models', 'json'];
 
 const index = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simple Node.js Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership token</title>
 </head>
 <body>
-  <h1>Simple Node.js Form</h1>
-  <form method="POST" action="/">
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required>
+<h1>Get or create membership token</h1>
+<form method="POST" action="/create">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
     <br><br>
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
+    <button type="submit">Create token</button>
+</form>
+<form method="POST" action="/get">
+    <label for="username1">Username:</label>
+    <input type="text" id="username1" name="username" required>
     <br><br>
-    <button type="submit">Submit</button>
-  </form>
+    <button type="submit">Get token</button>
+</form>
 </body>
 </html>
 `;

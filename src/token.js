@@ -10,20 +10,31 @@ class TokenHandler {
                 this.#countTokens()
                 break
             case '--new':
-                this.#createToken(additionalArgument[0])
+                this.createToken(additionalArgument[0])
                 break
-            case '--upd':
+            case '--upd': {
                 const key = additionalArgument[0] === 'p' ? 'phone' :
-                    additionalArgument[0] === 'e' ? "email" : ''
+                    additionalArgument[0] === 'e' ? "email" : null
 
-                if(!key) {
+                if (!key) {
                     return console.log('Unknown key provided, please check "node cli token --help"')
                 }
 
                 this.#updateToken(additionalArgument[1], key, additionalArgument[2])
                 break
-            case '--search':
+            }
+            case '--search': {
+                const key = additionalArgument[0] === 'p' ? 'phone' :
+                    additionalArgument[0] === 'e' ? "email" :
+                        additionalArgument[0] === 'u' ? "username" : null
+
+                if (!key) {
+                    return console.log('Unknown key provided, please check "node cli token --help"')
+                }
+
+                console.log(this.searchToken(key, additionalArgument[1]))
                 break
+            }
             case '--help':
             default:
                 extractLines('/../usage.txt', 15, 22)
@@ -48,7 +59,12 @@ class TokenHandler {
         })
     }
 
-    #createToken(username, email = null, phone = null) {
+    createToken(username, email = null, phone = null) {
+        if (this.searchToken('username', username)) {
+            console.log('Token with same username already exists!')
+            return 'Token with same username already exists!'
+        }
+
         const token = {
             username,
             email,
@@ -100,12 +116,28 @@ class TokenHandler {
                     console.log(`Token ${tokens[index].token} was updated for ${username}.`);
                 }
             })
-
         });
     }
 
-    searchToken() {
+    searchToken(key, value) {
+        const tokenPath = path.join(__dirname, '/../json/tokens.json')
+        let token = null
 
+        try {
+            let tokens = JSON.parse(fs.readFileSync(tokenPath, 'utf-8'))
+
+            const index = tokens.findIndex(token => token[key] === value);
+
+            if (index === -1) {
+                return console.log('Token not found')
+            }
+
+            token = tokens[index]
+        } catch (e) {
+            return console.log(e)
+        }
+
+        return token
     }
 }
 
