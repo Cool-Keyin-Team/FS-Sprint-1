@@ -1,7 +1,15 @@
+const {extractLines} = require("./utils");
+
 class InitHandler {
     handleRequest(argument) {
         switch (argument) {
             case '--help':
+                extractLines('/../usage.txt', 4,8)
+                    .then((lines) => {
+                        console.log('cli init help information\n')
+                        console.log(lines)
+                    })
+                    .catch(console.log)
                 break
             case '--all':
                 break
@@ -14,11 +22,11 @@ class InitHandler {
         }
     }
 
-    createFolders() {
+    #createFolders() {
 
     }
 
-    createFiles() {
+    #createFiles() {
 
     }
 }
