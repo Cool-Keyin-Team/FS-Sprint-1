@@ -8,6 +8,7 @@ const arguments = process.argv.slice(2)
 switch (arguments[0]) {
     case 'init':
         const initHandler = new InitHandler()
+        initHandler.handleRequest(arguments[1])
         break
     case 'config':
         const configHandler = new ConfigHandler()
